@@ -23,11 +23,19 @@ from __future__ import unicode_literals
 from hwp5.binmodel._shared import RecordModel
 from hwp5.tagids import HWPTAG_CTRL_EQEDIT
 from hwp5.dataio import UINT32
+from hwp5.dataio import WORD
+from hwp5.dataio import HWPUNIT
+from hwp5.binmodel._shared import COLORREF
+from hwp5.dataio import INT16
+from hwp5.dataio import WCHAR
 from hwp5.dataio import Enum
 from hwp5.dataio import Flags
+from hwp5.dataio import X_ARRAY
+from hwp5.dataio import ref_member
 
 
 class EqEdit(RecordModel):
+
     ''' 4.2.9.3. 한글 스크립트 수식 (한글 97 방식 수식) '''
     tagid = HWPTAG_CTRL_EQEDIT
 
@@ -35,13 +43,20 @@ class EqEdit(RecordModel):
     Flags = Flags(UINT32,
                   0, ScriptScope, 'script_scope')
 
-    @classmethod
     def attributes(cls):
         ''' 표 100 수식 개체 속성 '''
 
         # TODO: followings are not tested against real files
-        if False:
-            yield
+        #if False:
+        yield UINT32, 'range',
+        yield WORD, 'len_script',
+        yield X_ARRAY(WCHAR,ref_member('len_script')), 'script',
+        yield HWPUNIT, 'font_size',
+        yield COLORREF, 'color',
+        yield INT16, 'baseline',
+        #yield X_ARRAY(WCHAR,ref_member('len_script')), 'ver_script',
+        #yield X_ARRAY(WCHAR,ref_member('len_script')), 'font_name',
+    attributes = classmethod(attributes)
         # yield cls.Flags, 'flags'
         # yield BSTR, 'script'
         # yield HWPUNIT, 'font_size'
